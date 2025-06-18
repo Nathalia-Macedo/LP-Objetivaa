@@ -1,23 +1,81 @@
-"use client"
+// import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
+// import Footer from "../components/Footer";
+// import EmpreendimentosGrid from "../components/GridEmpreendimentos";
+// /**
+//  * A página já chega com o Header fixo do site.
+//  * - bg branco
+//  * - margem-top para não ficar colado no header
+//  * - título menor
+//  */
+// const Empreendimentos = () => (
+//   <div className="bg-white pt-28 md:pt-32">   {/* ← fundo branco + espaçamento */}
+//     <header className="max-w-7xl mx-auto px-4 mb-10">
+//       <nav className="text-xs text-gray-500 uppercase mb-3">
+//         <span className="hover:underline cursor-pointer">Home</span> / <span>Empreendimentos</span>
+//       </nav>
+//       <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">Empreendimentos</h1> {/* ← menor */}
+//     </header>
 
-import { motion } from "framer-motion"
+//     <section className="max-w-7xl mx-auto px-4 pb-16">
+//       <EmpreendimentosProvider>
+//         <EmpreendimentosGrid />
+//       </EmpreendimentosProvider>
+//     </section>
+
+//     <Footer />
+//   </div>
+// );
+
+// export default Empreendimentos;
+import { useState } from "react";
+import Footer from "../components/Footer";
+import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
+import EmpreendimentosGrid from "../components/GridEmpreendimentos";
+
+const CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
 
 const Empreendimentos = () => {
-  return (
-    <div className="pt-20">
-      <section id="empreendimentos" className="min-h-screen flex items-center justify-center bg-black">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="text-center"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Empreendimentos</h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">Conheça nossos principais empreendimentos</p>
-        </motion.div>
-      </section>
-    </div>
-  )
-}
+  const [active, setActive] = useState("Todos");
 
-export default Empreendimentos
+  return (
+    <div className="bg-white pt-28 md:pt-32">
+      {/* ---------- breadcrumb + título + filtros ---------- */}
+      <header className="max-w-7xl mx-auto px-4 mb-10">
+        <nav className="text-xs text-gray-500 uppercase mb-3">
+          <span className="hover:underline cursor-pointer">Home</span> / <span>Empreendimentos</span>
+        </nav>
+
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
+            Empreendimentos
+          </h1>
+
+          <ul className="flex gap-6 text-sm font-medium">
+            {CATS.map((c) => (
+              <li
+                key={c}
+                className={`cursor-pointer ${
+                  active === c ? "text-black" : "text-gray-400 hover:text-black"
+                }`}
+                onClick={() => setActive(c)}
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </header>
+
+      {/* ---------- grade ---------- */}
+      <section className="max-w-7xl mx-auto px-4 pb-16">
+        <EmpreendimentosProvider>
+          <EmpreendimentosGrid category={active} />
+        </EmpreendimentosProvider>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Empreendimentos;

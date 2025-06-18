@@ -1,38 +1,49 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // const testimonials = [
 //   {
-//     name: "Lorem Ipsum",
-//     subtitle: "Dolor sit amet",
-//     text: "Sed elit quam, iaculis sed semper sit amet udin vitae nibh. Rubino staveuo at magna skal semperFusce commodo molestie luctus.Lorem ipsum ulicon Dolor tusima oliatup.",
+//     name: "Marcus Peixinho",
+//     subtitle: "CLIENTE INVESTIDOR DO URBAN CAMINHO DAS ÁRVORES",
+//     text: "Fui olhar o URBAN para um familiar e gostei tanto do projeto que acabei comprando. Confesso que não estava nos meus planos! Na ocasião, fui atendido pelo sócio João Carlos Sampaio, que explicou com maestria o conceito e a proposta do URBAN. Durante a obra, acompanhei com tranquilidade a evolução e acabei antecipando os valores, em função da segurança transmitida. Na entrega do meu apartamento, fiquei impressionado com a qualidade do empreendimento. Logo iniciei as obras e consegui alugá-lo rapidamente, pois a procura é muito grande. O URBAN lançou outro empreendimento na Pituba e fiz de tudo para participar, mas, infelizmente, não consegui. Nos próximos, estarei dentro, pois estou 100% convencido da ideia e concepção da marca URBAN!",
 //   },
 //   {
-//     name: "Lorem Ipsum",
-//     subtitle: "Dolor sit amet",
-//     text: "Paras sitator ed elit quam, iaculis sed semper sit amet udin vitae nibh. at magna skal semperFusce commodo molestie luctus.Lorem ipsum vitalun Dolor tusima oliatup aculis sed semper sit ame.",
+//     name: "Carol Melo",
+//     subtitle: " CLIENTE DE REFORMA DE APARTAMENTO",
+//     text: "Estive na obra finalizada e queria te dizer que ficou tudo maravilhoso! Muito bem executado. Parabéns pelo excelente trabalho. Quero agradecer também por toda a assistência e suporte ao longo do processo. Seu atendimento e acompanhamento fizeram toda a diferença. O cliente está muito satisfeito, e isso é reflexo do cuidado em cada detalhe. Que venham os próximos, se Deus quiser! Com certeza faremos mais trabalhos juntos.",
 //   },
 //   {
-//     name: "Lorem Ipsum",
-//     subtitle: "Dolor sit amet",
-//     text: "Mais um exemplo de depoimento para completar o carrossel com vários elementos e simular uma rotação.",
-//   },
-//   {
-//     name: "Lorem Ipsum",
-//     subtitle: "Dolor sit amet",
-//     text: "Outro depoimento com informações importantes sobre o serviço prestado. Muito bom mesmo.",
+//     name: "NICOLA",
+//     subtitle: " COORDENADOR GERAL DA AIR FRANCE EM SALVADOR",
+//     text: "Na vinda da Air France para Salvador, tivemos o prazer de ser atendidos pela Objetiva. Foram sempre muito prestativos e atenciosos durante todo o processo. A obra foi muito bem executada, com grande atenção aos detalhes. Agradeço a todos que participaram deste lindo projeto",
 //   },
 // ];
 
+// // Hook para detectar se é mobile
+// const useIsMobile = () => {
+//   const [isMobile, setIsMobile] = useState(false);
+//   useEffect(() => {
+//     const updateSize = () => setIsMobile(window.innerWidth < 768);
+//     updateSize();
+//     window.addEventListener("resize", updateSize);
+//     return () => window.removeEventListener("resize", updateSize);
+//   }, []);
+//   return isMobile;
+// };
+
 // export default function ClientesSatisfeitos() {
+//   const isMobile = useIsMobile();
+//   const cardsPerPage = isMobile ? 1 : 2;
 //   const [current, setCurrent] = useState(0);
 
+//   const totalPages = Math.ceil(testimonials.length / cardsPerPage);
+
 //   const next = () => {
-//     setCurrent((prev) => (prev + 2 >= testimonials.length ? 0 : prev + 2));
+//     setCurrent((prev) => (prev + 1 >= totalPages ? 0 : prev + 1));
 //   };
 
 //   const prev = () => {
-//     setCurrent((prev) => (prev - 2 < 0 ? testimonials.length - 2 : prev - 2));
+//     setCurrent((prev) => (prev - 1 < 0 ? totalPages - 1 : prev - 1));
 //   };
 
 //   return (
@@ -76,14 +87,16 @@
 //           <div
 //             className="flex transition-transform duration-500"
 //             style={{
-//               transform: `translateX(-${(current / 2) * 100}%)`,
-//               width: `${(testimonials.length / 2) * 100}%`, // total width: cada par ocupa 100%
+//               transform: `translateX(-${(current / totalPages) * 100}%)`,
+//               width: `${(testimonials.length / cardsPerPage) * 100}%`,
 //             }}
 //           >
 //             {testimonials.map((t, i) => (
 //               <div
 //                 key={i}
-//                 className="w-full md:w-1/2 px-4 box-border"
+//                 className={`px-4 box-border ${
+//                   isMobile ? "w-full" : "w-1/2"
+//                 }`}
 //               >
 //                 <div className="bg-white border-t-4 border-orange-500 rounded-lg shadow p-6 relative h-full">
 //                   {/* Aspas no canto superior direito como texto */}
@@ -107,40 +120,41 @@
 //   );
 // }
 
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
+import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-const testimonials = [
+/* --- Dados originais (PT) --- */
+const testimonialsPT = [
   {
-    name: "Lorem Ipsum",
-    subtitle: "Dolor sit amet",
-    text: "Sed elit quam, iaculis sed semper sit amet udin vitae nibh. Rubino staveuo at magna skal semperFusce commodo molestie luctus.Lorem ipsum ulicon Dolor tusima oliatup.",
+    name: "Marcus Peixinho",
+    subtitle: "CLIENTE INVESTIDOR DO URBAN CAMINHO DAS ÁRVORES",
+    text: "Fui olhar o URBAN para um familiar e gostei tanto do projeto que acabei comprando. Confesso que não estava nos meus planos! Na ocasião, fui atendido pelo sócio João Carlos Sampaio, que explicou com maestria o conceito e a proposta do URBAN. Durante a obra, acompanhei com tranquilidade a evolução e acabei antecipando os valores, em função da segurança transmitida. Na entrega do meu apartamento, fiquei impressionado com a qualidade do empreendimento. Logo iniciei as obras e consegui alugá-lo rapidamente, pois a procura é muito grande. O URBAN lançou outro empreendimento na Pituba e fiz de tudo para participar, mas, infelizmente, não consegui. Nos próximos, estarei dentro, pois estou 100% convencido da ideia e concepção da marca URBAN!",
   },
   {
-    name: "Lorem Ipsum",
-    subtitle: "Dolor sit amet",
-    text: "Paras sitator ed elit quam, iaculis sed semper sit amet udin vitae nibh. at magna skal semperFusce commodo molestie luctus.Lorem ipsum vitalun Dolor tusima oliatup aculis sed semper sit ame.",
+    name: "Carol Melo",
+    subtitle: "CLIENTE DE REFORMA DE APARTAMENTO",
+    text: "Estive na obra finalizada e queria te dizer que ficou tudo maravilhoso! Muito bem executado. Parabéns pelo excelente trabalho. Quero agradecer também por toda a assistência e suporte ao longo do processo. Seu atendimento e acompanhamento fizeram toda a diferença. O cliente está muito satisfeito, e isso é reflexo do cuidado em cada detalhe. Que venham os próximos, se Deus quiser! Com certeza faremos mais trabalhos juntos.",
   },
   {
-    name: "Lorem Ipsum",
-    subtitle: "Dolor sit amet",
-    text: "Mais um exemplo de depoimento para completar o carrossel com vários elementos e simular uma rotação.",
-  },
-  {
-    name: "Lorem Ipsum",
-    subtitle: "Dolor sit amet",
-    text: "Outro depoimento com informações importantes sobre o serviço prestado. Muito bom mesmo.",
+    name: "NICOLA",
+    subtitle: "COORDENADOR GERAL DA AIR FRANCE EM SALVADOR",
+    text: "Na vinda da Air France para Salvador, tivemos o prazer de ser atendidos pela Objetiva. Foram sempre muito prestativos e atenciosos durante todo o processo. A obra foi muito bem executada, com grande atenção aos detalhes. Agradeço a todos que participaram deste lindo projeto",
   },
 ];
 
-// Hook para detectar se é mobile
+const headingPT = "+20,500 CLIENTES SATISFEITOS";
+
+/* Hook utilitário para detectar mobile */
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    const updateSize = () => setIsMobile(window.innerWidth < 768);
-    updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    const update = () => setIsMobile(window.innerWidth < 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
   return isMobile;
 };
@@ -150,15 +164,51 @@ export default function ClientesSatisfeitos() {
   const cardsPerPage = isMobile ? 1 : 2;
   const [current, setCurrent] = useState(0);
 
+  const { language } = useLanguage();
+  const { translateBatch } = useDynamicTranslation();
+
+  /* Estado para textos traduzidos */
+  const [testimonials, setTestimonials] = useState(testimonialsPT);
+  const [heading, setHeading] = useState(headingPT);
+
+  /* Traduz quando language muda */
+  useEffect(() => {
+    const translateContent = async () => {
+      if (language === "eng") {
+        /* Coletamos todos os pedaços que mudam */
+        const stringsToTranslate = [
+          headingPT,
+          ...testimonialsPT.flatMap((t) => [t.subtitle, t.text]),
+        ];
+        const translated = await translateBatch(stringsToTranslate, "en");
+
+        /* Primeiro item é o heading */
+        const newHeading = translated[0];
+
+        /* Reconstrói depoimentos (cada depoimento consome 2 strings) */
+        let idx = 1;
+        const newTestimonials = testimonialsPT.map((t) => {
+          const subtitleEn = translated[idx++];
+          const textEn = translated[idx++];
+          return { ...t, subtitle: subtitleEn, text: textEn };
+        });
+
+        setHeading(newHeading);
+        setTestimonials(newTestimonials);
+      } else {
+        /* Volta para o português */
+        setHeading(headingPT);
+        setTestimonials(testimonialsPT);
+      }
+    };
+
+    translateContent();
+  }, [language, translateBatch]);
+
+  /* Paginação */
   const totalPages = Math.ceil(testimonials.length / cardsPerPage);
-
-  const next = () => {
-    setCurrent((prev) => (prev + 1 >= totalPages ? 0 : prev + 1));
-  };
-
-  const prev = () => {
-    setCurrent((prev) => (prev - 1 < 0 ? totalPages - 1 : prev - 1));
-  };
+  const next = () => setCurrent((p) => (p + 1 >= totalPages ? 0 : p + 1));
+  const prev = () => setCurrent((p) => (p - 1 < 0 ? totalPages - 1 : p - 1));
 
   return (
     <section
@@ -171,14 +221,13 @@ export default function ClientesSatisfeitos() {
         backgroundSize: "10px 10px",
       }}
     >
+      {/* Título */}
       <div className="text-center mb-10 px-4">
-        <h2 className="text-3xl font-bold text-gray-900">
-          +20,500 CLIENTES SATISFEITOS
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-900">{heading}</h2>
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4">
-        {/* Navegação acima */}
+        {/* Navegação */}
         <div className="flex justify-end mb-6 space-x-4">
           <button
             onClick={prev}
@@ -196,7 +245,7 @@ export default function ClientesSatisfeitos() {
           </button>
         </div>
 
-        {/* Carrossel com animação de deslize */}
+        {/* Carrossel */}
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-500"
@@ -213,7 +262,6 @@ export default function ClientesSatisfeitos() {
                 }`}
               >
                 <div className="bg-white border-t-4 border-orange-500 rounded-lg shadow p-6 relative h-full">
-                  {/* Aspas no canto superior direito como texto */}
                   <div
                     className="absolute top-4 right-4 text-orange-500 opacity-30 text-6xl leading-none pointer-events-none select-none"
                     style={{ fontFamily: "'Georgia', serif" }}
@@ -233,6 +281,4 @@ export default function ClientesSatisfeitos() {
     </section>
   );
 }
-
-
 
