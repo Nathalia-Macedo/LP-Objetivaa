@@ -15,6 +15,7 @@ export const EmpreendimentosProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.get(API_URL);
+      console.log(response.data)
       setEmpreendimentos(response.data);
       console.log(response.data);
     } catch (error) {

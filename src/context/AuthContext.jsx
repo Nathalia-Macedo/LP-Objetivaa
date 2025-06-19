@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
         "https://back-end-objetiva.onrender.com/auth/login",
         { username, password }
       );
-
+      console.log(data)
       // salva token
       localStorage.setItem("token", data.token);
       setToken(data.token);

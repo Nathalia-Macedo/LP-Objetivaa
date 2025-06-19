@@ -40,7 +40,7 @@ const Empreendimentos = () => {
               className="relative flex-shrink-0 w-[250px] h-[350px] rounded-xl overflow-hidden group snap-start"
             >
               <img
-                src={`data:image/jpeg;base64,${card.images[0]}`} // usa a primeira imagem da lista
+                src={`${card.images[0]}`} // usa a primeira imagem da lista
                 alt={card.name}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />

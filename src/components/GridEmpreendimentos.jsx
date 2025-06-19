@@ -60,8 +60,6 @@
 
 // export default EmpreendimentosGrid;
 
-
-
 import { useEmpreendimentos } from "../context/EmpreendimentosContext";
 import { ArrowRight } from "lucide-react";
 
