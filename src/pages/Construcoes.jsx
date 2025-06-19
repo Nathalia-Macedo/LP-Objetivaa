@@ -184,9 +184,9 @@ export default function Construcoes() {
         style={{ paddingTop: NAV_H + 32 }} /* espaço após header */
       >
         {/* breadcrumb */}
-        <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+        <a href="/" className="text-xs uppercase tracking-wider text-gray-500 mb-2">
           Home / {translatedBreadcrumb}
-        </p>
+        </a>
 
         {/* título */}
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8">

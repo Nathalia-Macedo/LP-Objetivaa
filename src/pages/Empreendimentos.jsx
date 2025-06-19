@@ -144,7 +144,7 @@ const Empreendimentos = () => {
       {/* ---------- breadcrumb + título + filtros ---------- */}
       <header className="max-w-7xl mx-auto px-4 mb-10">
         <nav className="text-xs text-gray-500 uppercase mb-3">
-          <span className="hover:underline cursor-pointer">Home</span> / <span>{translatedBreadcrumb}</span>
+          <a href="/" className="hover:underline cursor-pointer">Home</a> / <span>{translatedBreadcrumb}</span>
         </nav>
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
