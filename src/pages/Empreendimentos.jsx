@@ -1,63 +1,167 @@
-// import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
+// import { useEffect, useState } from "react";
 // import Footer from "../components/Footer";
+// import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
 // import EmpreendimentosGrid from "../components/GridEmpreendimentos";
-// /**
-//  * A página já chega com o Header fixo do site.
-//  * - bg branco
-//  * - margem-top para não ficar colado no header
-//  * - título menor
-//  */
-// const Empreendimentos = () => (
-//   <div className="bg-white pt-28 md:pt-32">   {/* ← fundo branco + espaçamento */}
-//     <header className="max-w-7xl mx-auto px-4 mb-10">
-//       <nav className="text-xs text-gray-500 uppercase mb-3">
-//         <span className="hover:underline cursor-pointer">Home</span> / <span>Empreendimentos</span>
-//       </nav>
-//       <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">Empreendimentos</h1> {/* ← menor */}
-//     </header>
+// import { useLanguage } from "../context/LanguageContext";
+// import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-//     <section className="max-w-7xl mx-auto px-4 pb-16">
-//       <EmpreendimentosProvider>
-//         <EmpreendimentosGrid />
-//       </EmpreendimentosProvider>
-//     </section>
+// const ORIGINAL_CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
 
-//     <Footer />
-//   </div>
+// const Empreendimentos = () => {
+//   const [active, setActive] = useState("Todos");
+//   const [translatedCats, setTranslatedCats] = useState(ORIGINAL_CATS);
+//   const [translatedTitle, setTranslatedTitle] = useState("Empreendimentos");
+//   const [translatedBreadcrumb, setTranslatedBreadcrumb] = useState("Empreendimentos");
+
+//   const { language } = useLanguage();
+//   const { translateBatch, translateText } = useDynamicTranslation();
+
+//   useEffect(() => {
+//     const traduzir = async () => {
+//       if (language === "port") {
+//         setTranslatedCats(ORIGINAL_CATS);
+//         setTranslatedTitle("Empreendimentos");
+//         setTranslatedBreadcrumb("Empreendimentos");
+//         return;
+//       }
+
+//      const [tituloTrad, breadcrumbTrad, ...catsTraduzidos] = await translateBatch(
+//   ["Empreendimentos", "Empreendimentos", ...ORIGINAL_CATS],
+//   language === "en" ? "en" : "pt"
 // );
 
+//       setTranslatedTitle(tituloTrad);
+//       setTranslatedBreadcrumb(breadcrumbTrad);
+//       setTranslatedCats(catsTraduzidos);
+//     };
+
+//     traduzir();
+//   }, [language]);
+
+//   return (
+//     <div className="bg-white pt-28 md:pt-32">
+//       {/* ---------- breadcrumb + título + filtros ---------- */}
+//       <header className="max-w-7xl mx-auto px-4 mb-10">
+//         <nav className="text-xs text-gray-500 uppercase mb-3">
+//           <span className="hover:underline cursor-pointer">Home</span> / <span>{translatedBreadcrumb}</span>
+//         </nav>
+
+//         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+//           <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
+//             {translatedTitle}
+//           </h1>
+
+//           <ul className="flex gap-6 text-sm font-medium">
+//             {translatedCats.map((c, i) => (
+//               <li
+//                 key={c}
+//                 className={`cursor-pointer ${
+//                   active === ORIGINAL_CATS[i]
+//                     ? "text-black"
+//                     : "text-gray-400 hover:text-black"
+//                 }`}
+//                 onClick={() => setActive(ORIGINAL_CATS[i])} // ainda usamos o valor original como chave
+//               >
+//                 {c}
+//               </li>
+//             ))}
+//           </ul>
+//         </div>
+//       </header>
+
+//       {/* ---------- grade ---------- */}
+//       <section className="max-w-7xl mx-auto px-4 pb-16">
+//         <EmpreendimentosProvider>
+//           <EmpreendimentosGrid category={active} />
+//         </EmpreendimentosProvider>
+//       </section>
+
+//       <Footer />
+//     </div>
+//   );
+// };
+
 // export default Empreendimentos;
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
 import EmpreendimentosGrid from "../components/GridEmpreendimentos";
+import { useLanguage } from "../context/LanguageContext";
+import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-const CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
+const ORIGINAL_CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
 
 const Empreendimentos = () => {
   const [active, setActive] = useState("Todos");
+  const [translatedCats, setTranslatedCats] = useState(ORIGINAL_CATS);
+  const [translatedTitle, setTranslatedTitle] = useState("Empreendimentos");
+  const [translatedBreadcrumb, setTranslatedBreadcrumb] = useState("Empreendimentos");
+
+  const { language } = useLanguage();
+  const { translateBatch } = useDynamicTranslation();
+
+  useEffect(() => {
+    const traduzir = async () => {
+      if (language === "port") {
+        setTranslatedCats(ORIGINAL_CATS);
+        setTranslatedTitle("Empreendimentos");
+        setTranslatedBreadcrumb("Empreendimentos");
+        return;
+      }
+
+      const textsToTranslate = ["Empreendimentos", "Empreendimentos", ...ORIGINAL_CATS];
+      console.log("Textos para tradução:", textsToTranslate);
+
+      const translateWithRetry = async (texts, retries = 3) => {
+        for (let attempt = 0; attempt < retries; attempt++) {
+          try {
+            return await translateBatch(texts, "en");
+          } catch (error) {
+            console.error(`Erro na tentativa ${attempt + 1}:`, error);
+            if (attempt === retries - 1) throw error; // Lança o erro se for a última tentativa
+          }
+        }
+      };
+
+      try {
+        const traducaoFinal = await translateWithRetry(textsToTranslate);
+        console.log("Traduções recebidas:", traducaoFinal);
+
+        setTranslatedTitle(traducaoFinal[0]);
+        setTranslatedBreadcrumb(traducaoFinal[1]);
+        setTranslatedCats(traducaoFinal.slice(2));
+      } catch (error) {
+        console.error("Erro ao traduzir:", error);
+      }
+    };
+
+    traduzir();
+  }, [language]);
 
   return (
     <div className="bg-white pt-28 md:pt-32">
       {/* ---------- breadcrumb + título + filtros ---------- */}
       <header className="max-w-7xl mx-auto px-4 mb-10">
         <nav className="text-xs text-gray-500 uppercase mb-3">
-          <span className="hover:underline cursor-pointer">Home</span> / <span>Empreendimentos</span>
+          <span className="hover:underline cursor-pointer">Home</span> / <span>{translatedBreadcrumb}</span>
         </nav>
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
-            Empreendimentos
+            {translatedTitle}
           </h1>
 
           <ul className="flex gap-6 text-sm font-medium">
-            {CATS.map((c) => (
+            {translatedCats.map((c, i) => (
               <li
                 key={c}
                 className={`cursor-pointer ${
-                  active === c ? "text-black" : "text-gray-400 hover:text-black"
+                  active === ORIGINAL_CATS[i]
+                    ? "text-black"
+                    : "text-gray-400 hover:text-black"
                 }`}
-                onClick={() => setActive(c)}
+                onClick={() => setActive(ORIGINAL_CATS[i])} // ainda usamos o valor original como chave
               >
                 {c}
               </li>

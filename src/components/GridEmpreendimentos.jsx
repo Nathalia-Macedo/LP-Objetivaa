@@ -1,56 +1,108 @@
+// import { useEffect, useState } from "react";
 // import { useEmpreendimentos } from "../context/EmpreendimentosContext";
-// import { ArrowRight } from "lucide-react"; //  npm i lucide-react se ainda não tiver
+// import { useLanguage } from "../context/LanguageContext";
+// import useDynamicTranslation from "../hooks/useDynamicTranslaction";
+// import { ArrowRight } from "lucide-react";
 
-// /* URL base fixa do back-end (sem /projects) */
 // const BACKEND = "https://back-end-objetiva.onrender.com";
 
-// /* Garante que devolve uma URL exibível */
 // const imgSrc = (raw) => {
-//   if (!raw || raw === "string") return "/placeholder.jpg";    // fallback local
-//   if (/^https?:\/\//i.test(raw)) return raw;                  // já é URL absoluta
-//   if (!raw.startsWith("/")) raw = "/" + raw;                  // "uploads/..." → "/uploads/..."
-//   return BACKEND + raw;                                       // concatena domínio
+//   if (!raw || raw === "string") return "/placeholder.jpg";
+//   if (Array.isArray(raw)) raw = raw[0];
+//   if (raw.startsWith("data:image")) return raw;
+//   if (raw.length > 200 && !raw.startsWith("http")) {
+//     return `data:image/*;base64,${raw.replace(/^\/+/, "")}`;
+//   }
+//   if (/^https?:\/\//i.test(raw)) return raw;
+//   if (!raw.startsWith("/")) raw = "/" + raw;
+//   return BACKEND + raw;
 // };
 
 // const EmpreendimentosGrid = ({ category }) => {
 //   const { empreendimentos, loading } = useEmpreendimentos();
-//   console.log(empreendimentos)
+//   const { language } = useLanguage();
+//   const { translateBatch } = useDynamicTranslation();
+
+//   const [translatedCards, setTranslatedCards] = useState([]);
+
+// useEffect(() => {
+//   const traduzir = async () => {
+//     if (!empreendimentos || empreendimentos.length === 0) return;
+
+//     if (language === "port") {
+//       setTranslatedCards(empreendimentos);
+//       return;
+//     }
+
+//     const textos = empreendimentos.flatMap((e) => [
+//       e.tipo || "",
+//       e.status || "",
+//       e.name || "",
+//     ]);
+
+//     // Dividir em blocos menores
+//     const chunkSize = 30;
+//     const traducaoFinal = [];
+
+//     for (let i = 0; i < textos.length; i += chunkSize) {
+//       const chunk = textos.slice(i, i + chunkSize);
+//       const traduzido = await translateBatch(chunk, "en");
+//       traducaoFinal.push(...traduzido);
+//     }
+
+//     // Importante: garantir que o número de traduções esteja correto
+//     if (traducaoFinal.length < textos.length) {
+//       console.warn("Traduções incompletas:", {
+//         esperados: textos.length,
+//         recebidos: traducaoFinal.length,
+//       });
+//     }
+
+//     const cardsTraduzidos = empreendimentos.map((e, i) => ({
+//       ...e,
+//       tipo: traducaoFinal[i * 3] ?? e.tipo,
+//       status: traducaoFinal[i * 3 + 1] ?? e.status,
+//       name: traducaoFinal[i * 3 + 2] ?? e.name,
+//     }));
+
+//     setTranslatedCards(cardsTraduzidos);
+//     console.log("Textos para tradução:", textos);
+// console.log("Traduções recebidas:", traducaoFinal);
+
+//   };
+
+//   traduzir();
+// }, [language, empreendimentos?.length]);
+
 
 //   if (loading) return <p className="text-center text-gray-500 py-10">Carregando empreendimentos…</p>;
 
 //   const itens =
 //     category === "Todos"
-//       ? empreendimentos
-//       : empreendimentos.filter((e) => e.tipo?.toLowerCase() === category.toLowerCase());
+//       ? translatedCards
+//       : translatedCards.filter((e) => e.tipo?.toLowerCase() === category.toLowerCase());
 
 //   return (
 //     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 //       {itens.map((card, idx) => (
 //         <div key={card.id} className="relative group aspect-square overflow-hidden rounded">
-//           {/* imagem */}
 //           <img
 //             src={imgSrc(card.images?.[0])}
 //             alt={card.name}
 //             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
 //           />
-
-//           {/* overlay laranja em hover */}
 //           <div className="absolute inset-0 bg-orange-600/70 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-//           {/* seta só no primeiro card, igual ao layout */}
 //           {idx === 0 && (
 //             <ArrowRight
 //               size={28}
 //               className="absolute top-3 right-3 text-white opacity-0 group-hover:opacity-100 transition-opacity"
 //             />
 //           )}
-
-//           {/* texto inferior */}
 //           <div className="absolute bottom-0 left-0 right-0 p-3 text-white z-10">
 //             <p className="text-xs capitalize">
 //               {card.tipo || "Tipo"} — {card.status || "Status"}
 //             </p>
-//             <h3 className="text-base font-semibold leading-tight">{card.name}</h3>
+//             <h3 className="text-base font-semibold leading-tight break-words">{card.name}</h3>
 //           </div>
 //         </div>
 //       ))}
@@ -60,60 +112,119 @@
 
 // export default EmpreendimentosGrid;
 
+
+
+import { useEffect, useState } from "react";
 import { useEmpreendimentos } from "../context/EmpreendimentosContext";
+import { useLanguage } from "../context/LanguageContext";
+import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 import { ArrowRight } from "lucide-react";
 
-/* dominio do back-end quando vier “/uploads/…” */
 const BACKEND = "https://back-end-objetiva.onrender.com";
 
-/* Transforma qualquer valor em <img src="…"> válido  */
 const imgSrc = (raw) => {
   if (!raw || raw === "string") return "/placeholder.jpg";
-  
-  if (Array.isArray(raw)) raw = raw[0]; // Se raw for um array, pegue o primeiro elemento
+  if (Array.isArray(raw)) raw = raw[0];
   if (raw.startsWith("data:image")) return raw;
   if (raw.length > 200 && !raw.startsWith("http")) {
     return `data:image/*;base64,${raw.replace(/^\/+/, "")}`;
   }
   if (/^https?:\/\//i.test(raw)) return raw;
-  if (!raw.startsWith("/")) raw = "/" + raw; 
+  if (!raw.startsWith("/")) raw = "/" + raw;
   return BACKEND + raw;
 };
 
-
 const EmpreendimentosGrid = ({ category }) => {
   const { empreendimentos, loading } = useEmpreendimentos();
+  const { language } = useLanguage();
+  const { translateBatch } = useDynamicTranslation();
+
+  const [translatedCards, setTranslatedCards] = useState([]);
+
+  useEffect(() => {
+    const traduzir = async () => {
+      if (!empreendimentos || empreendimentos.length === 0) return;
+
+      if (language === "port") {
+        setTranslatedCards(empreendimentos);
+        return;
+      }
+
+      const textos = empreendimentos.flatMap((e) => [
+        e.tipo || "",
+        e.status || "",
+        e.name || "",
+      ]);
+
+      // Dividir em blocos menores
+      const chunkSize = 10; // Reduzido para 10
+      const traducaoFinal = [];
+
+      const translateWithRetry = async (chunk, retries = 3) => {
+        for (let attempt = 0; attempt < retries; attempt++) {
+          try {
+            return await translateBatch(chunk, "en");
+          } catch (error) {
+            console.error(`Erro na tentativa ${attempt + 1}:`, error);
+            if (attempt === retries - 1) throw error; // Lança o erro se for a última tentativa
+          }
+        }
+      };
+
+      for (let i = 0; i < textos.length; i += chunkSize) {
+        const chunk = textos.slice(i, i + chunkSize);
+        try {
+          const traduzido = await translateWithRetry(chunk);
+          traducaoFinal.push(...traduzido);
+        } catch (error) {
+          console.warn("Erro ao traduzir o bloco:", error);
+        }
+      }
+
+      // Importante: garantir que o número de traduções esteja correto
+      if (traducaoFinal.length < textos.length) {
+        console.warn("Traduções incompletas:", {
+          esperados: textos.length,
+          recebidos: traducaoFinal.length,
+        });
+      }
+
+      const cardsTraduzidos = empreendimentos.map((e, i) => ({
+        ...e,
+        tipo: traducaoFinal[i * 3] ?? e.tipo,
+        status: traducaoFinal[i * 3 + 1] ?? e.status,
+        name: traducaoFinal[i * 3 + 2] ?? e.name,
+      }));
+
+      setTranslatedCards(cardsTraduzidos);
+    };
+
+    traduzir();
+  }, [language, empreendimentos?.length]);
 
   if (loading) return <p className="text-center text-gray-500 py-10">Carregando empreendimentos…</p>;
 
   const itens =
     category === "Todos"
-      ? empreendimentos
-      : empreendimentos.filter((e) => e.tipo?.toLowerCase() === category.toLowerCase());
+      ? translatedCards
+      : translatedCards.filter((e) => e.tipo?.toLowerCase() === category.toLowerCase());
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {itens.map((card, idx) => (
         <div key={card.id} className="relative group aspect-square overflow-hidden rounded">
-          {/* imagem */}
           <img
             src={imgSrc(card.images?.[0])}
             alt={card.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-
-          {/* overlay laranja em hover */}
           <div className="absolute inset-0 bg-orange-600/70 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-          {/* seta apenas no primeiro card */}
           {idx === 0 && (
             <ArrowRight
               size={28}
               className="absolute top-3 right-3 text-white opacity-0 group-hover:opacity-100 transition-opacity"
             />
           )}
-
-          {/* info inferior */}
           <div className="absolute bottom-0 left-0 right-0 p-3 text-white z-10">
             <p className="text-xs capitalize">
               {card.tipo || "Tipo"} — {card.status || "Status"}
