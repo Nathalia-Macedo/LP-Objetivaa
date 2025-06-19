@@ -72,6 +72,7 @@ const Header = () => {
         <Link to="/" className="flex items-center">
           <img src={logo || "/placeholder.svg"} alt="Objetiva" className="h-8 w-auto" />
         </Link>
+<Link to="/login" className="absolute top-0 left-0 w-6 h-6 opacity-0 z-50" />
 
         {/* Navigation Menu - Desktop */}
         <nav className="hidden md:flex items-center justify-center flex-1 mx-16">
@@ -166,6 +167,8 @@ const Header = () => {
               >
                 Eng
               </button>
+       
+
             </div>
           </motion.div>
         )}
