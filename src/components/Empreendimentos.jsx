@@ -4,7 +4,7 @@ import { useEmpreendimentos } from "../context/EmpreendimentosContext";
 const Empreendimentos = () => {
   const containerRef = useRef(null);
   const { empreendimentos, loading } = useEmpreendimentos();
-
+  console.log(empreendimentos)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
