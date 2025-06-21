@@ -4,13 +4,13 @@
 
 // // providers
 // import { LanguageProvider }        from "../context/LanguageContext";
-// import { AuthProvider }            from "../context/AuthContext";   // 👈 TEM que vir antes dos outros
+// import { AuthProvider }            from "../context/AuthContext";
 // import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
 
 // // componentes fixos
 // import Header from "../components/Header";
 
-// // páginas …
+// // páginas lazy
 // const Home                 = lazy(() => import("../pages/Home"));
 // const Empreendimentos      = lazy(() => import("../pages/Empreendimentos"));
 // const Construcoes          = lazy(() => import("../pages/Construcoes"));
@@ -18,6 +18,7 @@
 // const Contato              = lazy(() => import("../pages/Contatos"));
 // const AdminEmpreendimentos = lazy(() => import("../pages/EmpreendimentosAdmin"));
 // const Login                = lazy(() => import("../pages/Login"));
+// const EmpreendimentoDetalhes = lazy(() => import("../pages/EmpreendimentosDetalhes")); // ✅ novo
 
 // function LayoutWithConditionalHeader({ children }) {
 //   const { pathname } = useLocation();
@@ -33,7 +34,7 @@
 // export default function App() {
 //   return (
 //     <LanguageProvider>
-//       <AuthProvider>                    {/* 🔐 AGORA cobre tudo */}
+//       <AuthProvider>
 //         <EmpreendimentosProvider>
 //           <Router>
 //             <LayoutWithConditionalHeader>
@@ -42,6 +43,7 @@
 //                 <Routes>
 //                   <Route path="/"                      element={<Home />} />
 //                   <Route path="/empreendimentos"       element={<Empreendimentos />} />
+//                   <Route path="/empreendimentos/:id"   element={<EmpreendimentoDetalhes />} /> {/* ✅ NOVA ROTA */}
 //                   <Route path="/construcoes"           element={<Construcoes />} />
 //                   <Route path="/quem-somos"            element={<QuemSomos />} />
 //                   <Route path="/contato"               element={<Contato />} />
@@ -56,9 +58,6 @@
 //     </LanguageProvider>
 //   );
 // }
-
-
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { Toaster } from "react-hot-toast";
@@ -79,11 +78,12 @@ const QuemSomos            = lazy(() => import("../pages/QuemSomos"));
 const Contato              = lazy(() => import("../pages/Contatos"));
 const AdminEmpreendimentos = lazy(() => import("../pages/EmpreendimentosAdmin"));
 const Login                = lazy(() => import("../pages/Login"));
+const ResetPassword        = lazy(() => import("../pages/resetPassword.jsx")); // Nova rota
 const EmpreendimentoDetalhes = lazy(() => import("../pages/EmpreendimentosDetalhes")); // ✅ novo
 
 function LayoutWithConditionalHeader({ children }) {
   const { pathname } = useLocation();
-  const hide = ["/login", "/admin/empreendimentos"].includes(pathname);
+  const hide = ["/login", "/reset-password", "/admin/empreendimentos"].includes(pathname);
   return (
     <div className="min-h-screen bg-black text-white">
       {!hide && <Header />}
@@ -110,6 +110,7 @@ export default function App() {
                   <Route path="/contato"               element={<Contato />} />
                   <Route path="/admin/empreendimentos" element={<AdminEmpreendimentos />} />
                   <Route path="/login"                 element={<Login />} />
+                  <Route path="/reset-password"        element={<ResetPassword />} /> {/* Nova rota para redefinição de senha */}
                 </Routes>
               </Suspense>
             </LayoutWithConditionalHeader>
