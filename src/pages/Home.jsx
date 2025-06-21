@@ -504,7 +504,7 @@ const Home = () => {
       "Reservatórios e rede de distribuição de água",
       "Gerenciamento e fiscalização de obras",
     ],
-    cta: "CONHEÇA NOSSOS EMPREENDIMENTOS!",
+    cta: "Sobre Nós",
     icone1: { titulo: "INCORPORAÇÃO", texto: "Desenvolvimento de empreendimentos imobiliários com excelência e qualidade superior" },
     icone2: { titulo: "CONSTRUÇÃO", texto: "Obras residenciais, comerciais e corporativas com tecnologia e inovação" },
     icone3: { titulo: "REFORMAS", texto: "Reformas e modernizações com planejamento e execução de alta qualidade" },
@@ -676,7 +676,7 @@ const Home = () => {
 
               <div className="pt-6">
                 <a
-                  href="#empreendimentos"
+                  href="/quem-somos"
                   className="text-[#c84a20] font-bold text-xs md:text-sm uppercase tracking-wider hover:underline transition-colors duration-300"
                 >
                   {TR.cta}
