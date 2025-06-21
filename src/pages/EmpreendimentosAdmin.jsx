@@ -328,29 +328,46 @@ export default function AdminEmpreendimentos() {
                     />
                   </div>
                   {previews.length > 0 && (
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-800">Imagens Selecionadas</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {previews.map((preview, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index + 1}`}
-                              className="h-20 w-full object-cover rounded-lg"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleImageDelete(form.images[index], index)}
-                              className="absolute top-1 right-1 bg-white/70 p-1 rounded-full text-red-600 hover:bg-white"
-                              aria-label={`Remover imagem ${index + 1}`}
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+  <div className="space-y-2">
+    <label className="text-sm font-medium text-gray-800">Imagens Selecionadas</label>
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      {previews.map((preview, index) => (
+        <div key={index} className="relative">
+          <img
+            src={preview}
+            alt={`Preview ${index + 1}`}
+            className="h-20 w-full object-cover rounded-lg"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              const isBase64 =
+                form.images[index]?.startsWith("data:image") ||
+                form.images[index]?.length > 200;
+
+              if (isBase64 || !editingId) {
+                // Remove apenas do estado local
+                setForm((prev) => ({
+                  ...prev,
+                  images: prev.images.filter((_, i) => i !== index),
+                }));
+                setPreviews((prev) => prev.filter((_, i) => i !== index));
+              } else {
+                // Remove do servidor
+                handleImageDelete(form.images[index], index);
+              }
+            }}
+            className="absolute top-1 right-1 bg-white/70 p-1 rounded-full text-red-600 hover:bg-white"
+            aria-label={`Remover imagem ${index + 1}`}
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
                   <button
                     type="submit"
                     disabled={loading}
