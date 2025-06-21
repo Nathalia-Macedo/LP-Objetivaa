@@ -59,29 +59,44 @@
 //   if (!atual || !traduzido) return null;
 
 //   const fotos = atual.images || [];
-//   const backgroundImage = `url(${imgSrc(fotos[0])})`;
 
 //   return (
 //     <>
-//       <section className="min-h-screen pt-28 bg-white grid grid-cols-1 lg:grid-cols-2">
-//         {/* Lado esquerdo - Informações */}
-//         <div className="px-6 md:px-10 py-10 flex flex-col justify-center">
-//           <div className="space-y-6">
-//             <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900">
-//               {traduzido.name}
-//             </h1>
-//             <p className="text-base text-neutral-700 leading-relaxed">
-//               {traduzido.caption}
-//             </p>
+//       <section className="min-h-screen pt-28 pb-10 px-4 bg-white">
+//         <div className="max-w-6xl mx-auto space-y-6">
+//           {/* CATEGORIA */}
+//           <p className="text-sm uppercase text-orange-500 font-medium tracking-wider">
+//             COMPLEXO HOTELEIRO — ALTO PADRÃO
+//           </p>
 
-//             <div className="text-sm text-neutral-500">
-//               <p className="mb-1">{atual.localizacao}</p>
-//               <p className="italic text-orange-600 font-medium">
-//                 {atual.tipo} – {atual.status}
-//               </p>
+//           {/* NOME DO EMPREENDIMENTO */}
+//           <h1 className="text-4xl font-extrabold leading-snug text-neutral-900">
+//             <span className="text-orange-600 block">{traduzido.name?.split(" ")[0]}</span>
+//             {traduzido.name?.split(" ").slice(1).join(" ")}
+//           </h1>
+
+//           {/* DESCRIÇÃO */}
+//           <p className="text-base text-neutral-700 leading-relaxed max-w-3xl">
+//             {traduzido.caption}
+//           </p>
+
+//           {/* IMAGENS LADO A LADO */}
+//           {fotos.length > 0 && (
+//             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+//               {fotos.slice(0, 2).map((foto, i) => (
+//                 <img
+//                   key={i}
+//                   src={imgSrc(foto)}
+//                   alt={`Imagem ${i + 1}`}
+//                   className="rounded-lg w-full h-[400px] object-cover"
+//                 />
+//               ))}
 //             </div>
+//           )}
 
-//             <ul className="space-y-3 pt-4">
+//           {/* OBSERVAÇÕES EM BULLET POINTS */}
+//           {traduzido.observacoes?.length > 0 && (
+//             <ul className="space-y-3 pt-6">
 //               {traduzido.observacoes.map((obs, i) => (
 //                 <li key={i} className="flex items-start gap-2 text-neutral-700">
 //                   <span className="w-2 h-2 mt-2 rounded-full bg-objetiva-orange shrink-0" />
@@ -89,31 +104,42 @@
 //                 </li>
 //               ))}
 //             </ul>
+//           )}
 
-//             <div className="flex flex-col sm:flex-row gap-4 pt-8">
-//               <button
-//                 onClick={() => navigate(-1)}
-//                 className="px-6 py-2 rounded-full bg-gray-100 text-sm font-semibold text-neutral-800 hover:bg-gray-200 transition"
-//               >
-//                 Voltar para a lista
-//               </button>
-//               <a
-//                 href="https://wa.me/71988970381"
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//                 className="px-6 py-2 rounded-full bg-objetiva-orange text-white text-sm font-semibold hover:bg-orange-700 transition"
-//               >
-//                 Fale conosco via WhatsApp
-//               </a>
+//           {/* INFORMAÇÕES COMPLEMENTARES */}
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 text-sm text-neutral-700">
+//             <div>
+//               <p className="font-medium">Localização:</p>
+//               <p>{atual.localizacao}</p>
+//             </div>
+//             <div>
+//               <p className="font-medium">Entrega:</p>
+//               <p>{atual.status}, {atual.tipo}</p>
+//             </div>
+//             <div>
+//               <p className="font-medium">Área construída:</p>
+//               <p>1.100m²</p> {/* Trocar se for dinâmico */}
 //             </div>
 //           </div>
-//         </div>
 
-//         {/* Lado direito - Background com imagem */}
-//         <div
-//           className="hidden lg:block h-full w-full rounded-l-[3rem] bg-cover bg-center"
-//           style={{ backgroundImage }}
-//         ></div>
+//           {/* BOTÕES DE AÇÃO */}
+//           <div className="flex flex-col sm:flex-row gap-4 pt-10">
+//             <button
+//               onClick={() => navigate(-1)}
+//               className="text-sm text-orange-600 hover:underline"
+//             >
+//               Voltar para a listagem
+//             </button>
+//             <a
+//               href="https://wa.me/71988970381"
+//               target="_blank"
+//               rel="noopener noreferrer"
+//               className="px-6 py-2 rounded-full bg-objetiva-orange text-white text-sm font-semibold hover:bg-orange-700 transition"
+//             >
+//               Fale conosco
+//             </a>
+//           </div>
+//         </div>
 //       </section>
 //       <Rodape />
 //     </>
@@ -121,10 +147,8 @@
 // };
 
 // export default EmpreendimentoDetalhes;
-
-
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useEmpreendimentos } from "../context/EmpreendimentosContext";
 import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
@@ -149,10 +173,23 @@ const EmpreendimentoDetalhes = () => {
   const { translateBatch } = useDynamicTranslation();
 
   const [traduzido, setTraduzido] = useState(null);
-  const [indexAtual, setIndexAtual] = useState(0);
-  const intervalRef = useRef(null);
 
   const atual = empreendimentos.find((e) => e.id === parseInt(id));
+  const indexAtual = empreendimentos.findIndex((e) => e.id === parseInt(id));
+
+  const irParaAnterior = () => {
+    if (indexAtual > 0) {
+      const idAnterior = empreendimentos[indexAtual - 1].id;
+      navigate(`/empreendimentos/${idAnterior}`);
+    }
+  };
+
+  const irParaProximo = () => {
+    if (indexAtual < empreendimentos.length - 1) {
+      const idProximo = empreendimentos[indexAtual + 1].id;
+      navigate(`/empreendimentos/${idProximo}`);
+    }
+  };
 
   useEffect(() => {
     if (!atual) return;
@@ -183,40 +220,43 @@ const EmpreendimentoDetalhes = () => {
     traduzir();
   }, [id, language, atual]);
 
-  useEffect(() => {
-    if (!atual?.images || atual.images.length <= 1) return;
-    intervalRef.current = setInterval(() => {
-      setIndexAtual((prev) => (prev + 1) % atual.images.length);
-    }, 4000);
-    return () => clearInterval(intervalRef.current);
-  }, [atual]);
-
   if (!atual || !traduzido) return null;
 
   const fotos = atual.images || [];
-  const backgroundImage = `url(${imgSrc(fotos[indexAtual])})`;
 
   return (
     <>
-      <section className="min-h-screen pt-28 bg-white grid grid-cols-1 lg:grid-cols-2">
-        {/* Lado esquerdo - Informações */}
-        <div className="px-6 md:px-10 py-10 flex flex-col justify-center">
-          <div className="space-y-6">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900">
-              {traduzido.name}
-            </h1>
-            <p className="text-base text-neutral-700 leading-relaxed">
-              {traduzido.caption}
-            </p>
+      <section className="min-h-screen pt-28 pb-10 px-4 bg-white">
+        <div className="max-w-6xl mx-auto space-y-6">
 
-            <div className="text-sm text-neutral-500">
-              <p className="mb-1">{atual.localizacao}</p>
-              <p className="italic text-orange-600 font-medium">
-                {atual.tipo} – {atual.status}
-              </p>
+          {/* NOME DO EMPREENDIMENTO */}
+          <h1 className="text-4xl font-extrabold leading-snug text-neutral-900">
+            <span className="text-orange-600 block">{traduzido.name?.split(" ")[0]}</span>
+            {traduzido.name?.split(" ").slice(1).join(" ")}
+          </h1>
+
+          {/* DESCRIÇÃO */}
+          <p className="text-base text-neutral-700 leading-relaxed max-w-3xl">
+            {traduzido.caption}
+          </p>
+
+          {/* IMAGENS LADO A LADO */}
+          {fotos.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+              {fotos.slice(0, 2).map((foto, i) => (
+                <img
+                  key={i}
+                  src={imgSrc(foto)}
+                  alt={`Imagem ${i + 1}`}
+                  className="rounded-lg w-full h-[400px] object-cover"
+                />
+              ))}
             </div>
+          )}
 
-            <ul className="space-y-3 pt-4">
+          {/* OBSERVAÇÕES EM BULLET POINTS */}
+          {traduzido.observacoes?.length > 0 && (
+            <ul className="space-y-3 pt-6">
               {traduzido.observacoes.map((obs, i) => (
                 <li key={i} className="flex items-start gap-2 text-neutral-700">
                   <span className="w-2 h-2 mt-2 rounded-full bg-objetiva-orange shrink-0" />
@@ -224,32 +264,40 @@ const EmpreendimentoDetalhes = () => {
                 </li>
               ))}
             </ul>
+          )}
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-8">
-              <button
-                onClick={() => navigate(-1)}
-                className="px-6 py-2 rounded-full bg-gray-100 text-sm font-semibold text-neutral-800 hover:bg-gray-200 transition"
-              >
-                Voltar para a lista
-              </button>
-              <a
-                href="https://wa.me/71988970381"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-2 rounded-full bg-objetiva-orange text-white text-sm font-semibold hover:bg-orange-700 transition"
-              >
-                Fale conosco via WhatsApp
-              </a>
+          {/* INFORMAÇÕES COMPLEMENTARES */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 text-sm text-neutral-700">
+            <div>
+              <p className="font-medium">Localização:</p>
+              <p>{atual.localizacao}</p>
+            </div>
+            <div>
+              <p className="font-medium">Entrega:</p>
+              <p>{atual.status}, {atual.tipo}</p>
             </div>
           </div>
-        </div>
 
-        {/* Lado direito - Background com imagem como carrossel */}
-        <div
-          className="hidden lg:block h-full w-full rounded-l-[3rem] bg-cover bg-center transition-all duration-700"
-          style={{ backgroundImage }}
-        ></div>
+          {/* BOTÕES DE AÇÃO */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-10">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-sm text-orange-600 hover:underline"
+            >
+              Voltar para a listagem
+            </button>
+            <a
+              href="https://wa.me/71988970381"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2 rounded-full bg-objetiva-orange text-white text-sm font-semibold hover:bg-orange-700 transition"
+            >
+              Fale conosco
+            </a>
+          </div>
+        </div>
       </section>
+
       <Rodape />
     </>
   );

@@ -265,13 +265,19 @@ export default function AdminEmpreendimentos() {
                       onChange={handleChange}
                       className="bg-white/50 border border-white/30 p-3 rounded-lg text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300"
                     />
-                    <input
-                      name="tipo"
-                      placeholder="Tipo (residencial…)"
-                      value={form.tipo}
-                      onChange={handleChange}
-                      className="bg-white/50 border border-white/30 p-3 rounded-lg text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300"
-                    />
+                   <select
+  name="tipo"
+  value={form.tipo}
+  onChange={handleChange}
+  required
+  className="bg-white/50 border border-white/30 p-3 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-300"
+>
+  <option value="">Tipo de Empreendimento</option>
+  <option value="Residencial">Residencial</option>
+  <option value="Empresarial">Empresarial</option>
+  <option value="Casas">Casas</option>
+</select>
+
                     <select
                       name="status"
                       value={form.status}

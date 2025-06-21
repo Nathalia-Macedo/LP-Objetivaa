@@ -25,55 +25,66 @@
 
 //   const [translatedCards, setTranslatedCards] = useState([]);
 
-// useEffect(() => {
-//   const traduzir = async () => {
-//     if (!empreendimentos || empreendimentos.length === 0) return;
+//   useEffect(() => {
+//     const traduzir = async () => {
+//       if (!empreendimentos || empreendimentos.length === 0) return;
 
-//     if (language === "port") {
-//       setTranslatedCards(empreendimentos);
-//       return;
-//     }
+//       if (language === "port") {
+//         setTranslatedCards(empreendimentos);
+//         return;
+//       }
 
-//     const textos = empreendimentos.flatMap((e) => [
-//       e.tipo || "",
-//       e.status || "",
-//       e.name || "",
-//     ]);
+//       const textos = empreendimentos.flatMap((e) => [
+//         e.tipo || "",
+//         e.status || "",
+//         e.name || "",
+//       ]);
 
-//     // Dividir em blocos menores
-//     const chunkSize = 30;
-//     const traducaoFinal = [];
+//       // Dividir em blocos menores
+//       const chunkSize = 10; // Reduzido para 10
+//       const traducaoFinal = [];
 
-//     for (let i = 0; i < textos.length; i += chunkSize) {
-//       const chunk = textos.slice(i, i + chunkSize);
-//       const traduzido = await translateBatch(chunk, "en");
-//       traducaoFinal.push(...traduzido);
-//     }
+//       const translateWithRetry = async (chunk, retries = 3) => {
+//         for (let attempt = 0; attempt < retries; attempt++) {
+//           try {
+//             return await translateBatch(chunk, "en");
+//           } catch (error) {
+//             console.error(`Erro na tentativa ${attempt + 1}:`, error);
+//             if (attempt === retries - 1) throw error; // Lança o erro se for a última tentativa
+//           }
+//         }
+//       };
 
-//     // Importante: garantir que o número de traduções esteja correto
-//     if (traducaoFinal.length < textos.length) {
-//       console.warn("Traduções incompletas:", {
-//         esperados: textos.length,
-//         recebidos: traducaoFinal.length,
-//       });
-//     }
+//       for (let i = 0; i < textos.length; i += chunkSize) {
+//         const chunk = textos.slice(i, i + chunkSize);
+//         try {
+//           const traduzido = await translateWithRetry(chunk);
+//           traducaoFinal.push(...traduzido);
+//         } catch (error) {
+//           console.warn("Erro ao traduzir o bloco:", error);
+//         }
+//       }
 
-//     const cardsTraduzidos = empreendimentos.map((e, i) => ({
-//       ...e,
-//       tipo: traducaoFinal[i * 3] ?? e.tipo,
-//       status: traducaoFinal[i * 3 + 1] ?? e.status,
-//       name: traducaoFinal[i * 3 + 2] ?? e.name,
-//     }));
+//       // Importante: garantir que o número de traduções esteja correto
+//       if (traducaoFinal.length < textos.length) {
+//         console.warn("Traduções incompletas:", {
+//           esperados: textos.length,
+//           recebidos: traducaoFinal.length,
+//         });
+//       }
 
-//     setTranslatedCards(cardsTraduzidos);
-//     console.log("Textos para tradução:", textos);
-// console.log("Traduções recebidas:", traducaoFinal);
+//       const cardsTraduzidos = empreendimentos.map((e, i) => ({
+//         ...e,
+//         tipo: traducaoFinal[i * 3] ?? e.tipo,
+//         status: traducaoFinal[i * 3 + 1] ?? e.status,
+//         name: traducaoFinal[i * 3 + 2] ?? e.name,
+//       }));
 
-//   };
+//       setTranslatedCards(cardsTraduzidos);
+//     };
 
-//   traduzir();
-// }, [language, empreendimentos?.length]);
-
+//     traduzir();
+//   }, [language, empreendimentos?.length]);
 
 //   if (loading) return <p className="text-center text-gray-500 py-10">Carregando empreendimentos…</p>;
 
@@ -111,10 +122,8 @@
 // };
 
 // export default EmpreendimentosGrid;
-
-
-
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useEmpreendimentos } from "../context/EmpreendimentosContext";
 import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
@@ -156,8 +165,7 @@ const EmpreendimentosGrid = ({ category }) => {
         e.name || "",
       ]);
 
-      // Dividir em blocos menores
-      const chunkSize = 10; // Reduzido para 10
+      const chunkSize = 10;
       const traducaoFinal = [];
 
       const translateWithRetry = async (chunk, retries = 3) => {
@@ -166,7 +174,7 @@ const EmpreendimentosGrid = ({ category }) => {
             return await translateBatch(chunk, "en");
           } catch (error) {
             console.error(`Erro na tentativa ${attempt + 1}:`, error);
-            if (attempt === retries - 1) throw error; // Lança o erro se for a última tentativa
+            if (attempt === retries - 1) throw error;
           }
         }
       };
@@ -181,7 +189,6 @@ const EmpreendimentosGrid = ({ category }) => {
         }
       }
 
-      // Importante: garantir que o número de traduções esteja correto
       if (traducaoFinal.length < textos.length) {
         console.warn("Traduções incompletas:", {
           esperados: textos.length,
@@ -212,7 +219,11 @@ const EmpreendimentosGrid = ({ category }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {itens.map((card, idx) => (
-        <div key={card.id} className="relative group aspect-square overflow-hidden rounded">
+        <Link
+          to={`/empreendimentos/${card.id}`}
+          key={card.id}
+          className="relative group aspect-square overflow-hidden rounded"
+        >
           <img
             src={imgSrc(card.images?.[0])}
             alt={card.name}
@@ -231,7 +242,7 @@ const EmpreendimentosGrid = ({ category }) => {
             </p>
             <h3 className="text-base font-semibold leading-tight break-words">{card.name}</h3>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
