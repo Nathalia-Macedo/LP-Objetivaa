@@ -473,7 +473,7 @@ import { motion } from "framer-motion";
 import buildingsIcon from "../assets/predio.png";
 import houseIcon from "../assets/casa.png";
 import industryIcon from "../assets/industria.png";
-import heroBackground from "../assets/Bg.png";
+import heroBackground from "../assets/Bg.jpg";
 import heroVideo from "../assets/URBAN HOME PITUBA - VIDEO LANÇAMENTO.mp4";
 
 import Rodape from "../components/Footer";
