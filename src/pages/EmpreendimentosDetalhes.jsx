@@ -26,6 +26,21 @@
 //   const [traduzido, setTraduzido] = useState(null);
 
 //   const atual = empreendimentos.find((e) => e.id === parseInt(id));
+//   const indexAtual = empreendimentos.findIndex((e) => e.id === parseInt(id));
+
+//   const irParaAnterior = () => {
+//     if (indexAtual > 0) {
+//       const idAnterior = empreendimentos[indexAtual - 1].id;
+//       navigate(`/empreendimentos/${idAnterior}`);
+//     }
+//   };
+
+//   const irParaProximo = () => {
+//     if (indexAtual < empreendimentos.length - 1) {
+//       const idProximo = empreendimentos[indexAtual + 1].id;
+//       navigate(`/empreendimentos/${idProximo}`);
+//     }
+//   };
 
 //   useEffect(() => {
 //     if (!atual) return;
@@ -64,10 +79,6 @@
 //     <>
 //       <section className="min-h-screen pt-28 pb-10 px-4 bg-white">
 //         <div className="max-w-6xl mx-auto space-y-6">
-//           {/* CATEGORIA */}
-//           <p className="text-sm uppercase text-orange-500 font-medium tracking-wider">
-//             COMPLEXO HOTELEIRO — ALTO PADRÃO
-//           </p>
 
 //           {/* NOME DO EMPREENDIMENTO */}
 //           <h1 className="text-4xl font-extrabold leading-snug text-neutral-900">
@@ -116,10 +127,6 @@
 //               <p className="font-medium">Entrega:</p>
 //               <p>{atual.status}, {atual.tipo}</p>
 //             </div>
-//             <div>
-//               <p className="font-medium">Área construída:</p>
-//               <p>1.100m²</p> {/* Trocar se for dinâmico */}
-//             </div>
 //           </div>
 
 //           {/* BOTÕES DE AÇÃO */}
@@ -141,6 +148,7 @@
 //           </div>
 //         </div>
 //       </section>
+
 //       <Rodape />
 //     </>
 //   );
@@ -173,6 +181,7 @@ const EmpreendimentoDetalhes = () => {
   const { translateBatch } = useDynamicTranslation();
 
   const [traduzido, setTraduzido] = useState(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   const atual = empreendimentos.find((e) => e.id === parseInt(id));
   const indexAtual = empreendimentos.findIndex((e) => e.id === parseInt(id));
@@ -199,30 +208,46 @@ const EmpreendimentoDetalhes = () => {
         const textos = [
           atual.name,
           ...(atual.caption ? [atual.caption] : []),
-          ...(atual.observacoes || [])
+          ...(atual.observacoes || []),
         ];
         const traduzido = await translateBatch(textos, "en");
 
         setTraduzido({
           name: traduzido[0],
           caption: atual.caption ? traduzido[1] : "",
-          observacoes: atual.observacoes ? traduzido.slice(atual.caption ? 2 : 1) : []
+          observacoes: atual.observacoes ? traduzido.slice(atual.caption ? 2 : 1) : [],
         });
       } else {
         setTraduzido({
           name: atual.name,
           caption: atual.caption,
-          observacoes: atual.observacoes || []
+          observacoes: atual.observacoes || [],
         });
       }
     };
 
     traduzir();
+    setCarouselIndex(0); // resetar carrossel ao trocar de empreendimento
   }, [id, language, atual]);
 
   if (!atual || !traduzido) return null;
 
   const fotos = atual.images || [];
+  const mostrarSetas = fotos.length > 2;
+
+  const imagensVisiveis = fotos.slice(carouselIndex, carouselIndex + 2);
+
+  const proximoSlide = () => {
+    if (carouselIndex + 2 < fotos.length) {
+      setCarouselIndex(carouselIndex + 1);
+    }
+  };
+
+  const slideAnterior = () => {
+    if (carouselIndex > 0) {
+      setCarouselIndex(carouselIndex - 1);
+    }
+  };
 
   return (
     <>
@@ -240,17 +265,44 @@ const EmpreendimentoDetalhes = () => {
             {traduzido.caption}
           </p>
 
-          {/* IMAGENS LADO A LADO */}
+          {/* IMAGENS */}
           {fotos.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              {fotos.slice(0, 2).map((foto, i) => (
-                <img
-                  key={i}
-                  src={imgSrc(foto)}
-                  alt={`Imagem ${i + 1}`}
-                  className="rounded-lg w-full h-[400px] object-cover"
-                />
-              ))}
+            <div className="relative mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {imagensVisiveis.map((foto, i) => (
+                  <img
+                    key={i}
+                    src={imgSrc(foto)}
+                    alt={`Imagem ${i + 1}`}
+                    className="rounded-lg w-full h-[400px] object-cover"
+                  />
+                ))}
+              </div>
+
+              {mostrarSetas && (
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={slideAnterior}
+                    disabled={carouselIndex === 0}
+                    className={`px-4 py-2 rounded bg-gray-200 text-sm ${
+                      carouselIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+                    }`}
+                  >
+                    ← Anterior
+                  </button>
+                  <button
+                    onClick={proximoSlide}
+                    disabled={carouselIndex + 2 >= fotos.length}
+                    className={`px-4 py-2 rounded bg-gray-200 text-sm ${
+                      carouselIndex + 2 >= fotos.length
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-300"
+                    }`}
+                  >
+                    Próximo →
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

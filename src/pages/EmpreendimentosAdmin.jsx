@@ -204,7 +204,6 @@ export default function AdminEmpreendimentos() {
     <>
       <AdminHeader />
       <section className="py-10 px-4 bg-gradient-to-br from-white to-orange-50 min-h-screen">
-        <Toaster position="top-right" />
         <div className="max-w-7xl mx-auto">
           {/* ABAS */}
           <div className="flex border-b border-gray-200 mb-6">
