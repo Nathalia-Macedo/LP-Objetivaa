@@ -16,7 +16,7 @@ const WhatsAppButton = () => {
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-colors duration-300">
+      <div className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg hover:shadow-xl transition-colors duration-300">
         <img src={whatsapp} alt="" />
       </div>
     </motion.a>
