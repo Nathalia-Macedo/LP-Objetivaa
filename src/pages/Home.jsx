@@ -473,7 +473,7 @@ import { motion } from "framer-motion";
 import buildingsIcon from "../assets/predio.png";
 import houseIcon from "../assets/casa.png";
 import industryIcon from "../assets/industria.png";
-import heroBackground from "../assets/Bg.jpg";
+import heroBackground from "../assets/fachada.png";
 import heroVideo from "../assets/URBAN HOME PITUBA - VIDEO LANÇAMENTO.mp4";
 
 import Rodape from "../components/Footer";
@@ -504,7 +504,7 @@ const Home = () => {
       "Reservatórios e rede de distribuição de água",
       "Gerenciamento e fiscalização de obras",
     ],
-    cta: "Sobre Nós",
+    cta: "",
     icone1: { titulo: "INCORPORAÇÃO", texto: "Desenvolvimento de empreendimentos imobiliários com excelência e qualidade superior" },
     icone2: { titulo: "CONSTRUÇÃO", texto: "Obras residenciais, comerciais e corporativas com tecnologia e inovação" },
     icone3: { titulo: "REFORMAS", texto: "Reformas e modernizações com planejamento e execução de alta qualidade" },

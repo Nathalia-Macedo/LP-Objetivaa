@@ -1,88 +1,3 @@
-// import { useEffect, useState } from "react";
-// import Footer from "../components/Footer";
-// import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
-// import EmpreendimentosGrid from "../components/GridEmpreendimentos";
-// import { useLanguage } from "../context/LanguageContext";
-// import useDynamicTranslation from "../hooks/useDynamicTranslaction";
-
-// const ORIGINAL_CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
-
-// const Empreendimentos = () => {
-//   const [active, setActive] = useState("Todos");
-//   const [translatedCats, setTranslatedCats] = useState(ORIGINAL_CATS);
-//   const [translatedTitle, setTranslatedTitle] = useState("Empreendimentos");
-//   const [translatedBreadcrumb, setTranslatedBreadcrumb] = useState("Empreendimentos");
-
-//   const { language } = useLanguage();
-//   const { translateBatch, translateText } = useDynamicTranslation();
-
-//   useEffect(() => {
-//     const traduzir = async () => {
-//       if (language === "port") {
-//         setTranslatedCats(ORIGINAL_CATS);
-//         setTranslatedTitle("Empreendimentos");
-//         setTranslatedBreadcrumb("Empreendimentos");
-//         return;
-//       }
-
-//      const [tituloTrad, breadcrumbTrad, ...catsTraduzidos] = await translateBatch(
-//   ["Empreendimentos", "Empreendimentos", ...ORIGINAL_CATS],
-//   language === "en" ? "en" : "pt"
-// );
-
-//       setTranslatedTitle(tituloTrad);
-//       setTranslatedBreadcrumb(breadcrumbTrad);
-//       setTranslatedCats(catsTraduzidos);
-//     };
-
-//     traduzir();
-//   }, [language]);
-
-//   return (
-//     <div className="bg-white pt-28 md:pt-32">
-//       {/* ---------- breadcrumb + título + filtros ---------- */}
-//       <header className="max-w-7xl mx-auto px-4 mb-10">
-//         <nav className="text-xs text-gray-500 uppercase mb-3">
-//           <span className="hover:underline cursor-pointer">Home</span> / <span>{translatedBreadcrumb}</span>
-//         </nav>
-
-//         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-//           <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
-//             {translatedTitle}
-//           </h1>
-
-//           <ul className="flex gap-6 text-sm font-medium">
-//             {translatedCats.map((c, i) => (
-//               <li
-//                 key={c}
-//                 className={`cursor-pointer ${
-//                   active === ORIGINAL_CATS[i]
-//                     ? "text-black"
-//                     : "text-gray-400 hover:text-black"
-//                 }`}
-//                 onClick={() => setActive(ORIGINAL_CATS[i])} // ainda usamos o valor original como chave
-//               >
-//                 {c}
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       </header>
-
-//       {/* ---------- grade ---------- */}
-//       <section className="max-w-7xl mx-auto px-4 pb-16">
-//         <EmpreendimentosProvider>
-//           <EmpreendimentosGrid category={active} />
-//         </EmpreendimentosProvider>
-//       </section>
-
-//       <Footer />
-//     </div>
-//   );
-// };
-
-// export default Empreendimentos;
-
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import { EmpreendimentosProvider } from "../context/EmpreendimentosContext";
@@ -90,7 +5,7 @@ import EmpreendimentosGrid from "../components/GridEmpreendimentos";
 import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-const ORIGINAL_CATS = ["Todos", "Empresarial", "Residencial", "Casas"];
+const ORIGINAL_CATS = ["Todos"];
 
 const Empreendimentos = () => {
   const [active, setActive] = useState("Todos");

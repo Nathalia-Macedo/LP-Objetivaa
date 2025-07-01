@@ -1,12 +1,13 @@
 // import { useEffect, useState } from "react";
 // import { motion } from "framer-motion";
+// import { Link } from "react-router-dom";
 // import { useEmpreendimentos } from "../context/EmpreendimentosContext";
 // import Footer from "../components/Footer";
 // import { useLanguage } from "../context/LanguageContext";
 // import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-// const ORIGINAL_FILTROS = ["Todos", "Empresarial", "Residencial", "Casas"];
-// const NAV_H = 96; // altura real do seu header (px) — ajuste se necessário
+// const ORIGINAL_FILTROS = ["Todos"];
+// const NAV_H = 96;
 
 // export default function Construcoes() {
 //   const { empreendimentos, loading } = useEmpreendimentos();
@@ -25,7 +26,7 @@
 //         setTranslatedFiltros(ORIGINAL_FILTROS);
 //         setTranslatedTitle("Construções");
 //         setTranslatedBreadcrumb("Construções");
-//         setTranslatedEmpreendimentos(empreendimentos); // Mantém os empreendimentos originais
+//         setTranslatedEmpreendimentos(empreendimentos);
 //         return;
 //       }
 
@@ -39,7 +40,6 @@
 //         setTranslatedBreadcrumb(breadcrumbTrad);
 //         setTranslatedFiltros(filtrosTraduzidos);
 
-//         // Traduzir os empreendimentos
 //         const empreendimentosParaTraduzir = empreendimentos.flatMap((e) => [
 //           e.tipo || "",
 //           e.status || "",
@@ -65,17 +65,14 @@
 //   }, [language, empreendimentos]);
 
 //   const lista = translatedEmpreendimentos.filter((e) =>
-//     tab === "Todos"
-//       ? true
-//       : (e.tipo || "").toLowerCase() === tab.toLowerCase()
+//     tab === "Todos" ? true : (e.tipo || "").toLowerCase() === tab.toLowerCase()
 //   );
 
 //   return (
 //     <main className="bg-white flex flex-col min-h-screen">
-//       {/* ---- CONTEÚDO PRINCIPAL ---- */}
 //       <section
 //         className="w-full max-w-7xl mx-auto px-4"
-//         style={{ paddingTop: NAV_H + 32 }} /* espaço após header */
+//         style={{ paddingTop: NAV_H + 32 }}
 //       >
 //         {/* breadcrumb */}
 //         <a href="/" className="text-xs uppercase tracking-wider text-gray-500 mb-2">
@@ -108,50 +105,47 @@
 //         {loading ? (
 //           <p className="text-gray-500">Carregando construções…</p>
 //         ) : (
-//           <motion.div
-//             layout
-//             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
-//           >
+//           <motion.div layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 //             {lista.map((c) => (
-//               <motion.div
-//                 key={c.id}
-//                 layout
-//                 initial={{ opacity: 0, scale: 0.95 }}
-//                 animate={{ opacity: 1, scale: 1 }}
-//                 transition={{ duration: 0.25 }}
-//                 className="relative h-60 rounded-lg overflow-hidden shadow group"
-//               >
-//                 {c.images?.length ? (
-//                   <img
-//                     src={c.images[0]}
-//                     alt={c.name}
-//                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-//                   />
-//                 ) : (
-//                   <div className="absolute inset-0 bg-gray-200 flex items-center justify-center text-gray-500">
-//                     Sem imagem
+//               <Link to={`/empreendimentos/${c.id}`} key={c.id}>
+//                 <motion.div
+//                   layout
+//                   initial={{ opacity: 0, scale: 0.95 }}
+//                   animate={{ opacity: 1, scale: 1 }}
+//                   transition={{ duration: 0.25 }}
+//                   className="relative h-60 rounded-lg overflow-hidden shadow group"
+//                 >
+//                   {c.images?.length ? (
+//                     <img
+//                       src={c.images[0]}
+//                       alt={c.name}
+//                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+//                     />
+//                   ) : (
+//                     <div className="absolute inset-0 bg-gray-200 flex items-center justify-center text-gray-500">
+//                       Sem imagem
+//                     </div>
+//                   )}
+
+//                   {/* overlay */}
+//                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+//                   {/* informações */}
+//                   <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+//                     <p className="text-white text-xs capitalize line-clamp-1">
+//                       {c.tipo || "-"} — {c.status || ""}
+//                     </p>
+//                     <h3 className="text-white font-semibold leading-tight line-clamp-2">
+//                       {c.name}
+//                     </h3>
 //                   </div>
-//                 )}
-
-//                 {/* overlay no hover */}
-//                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-//                 {/* info */}
-//                 <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-//                   <p className="text-white text-xs capitalize line-clamp-1">
-//                     {c.tipo || "-"} — {c.status || ""}
-//                   </p>
-//                   <h3 className="text-white font-semibold leading-tight line-clamp-2">
-//                     {c.name}
-//                   </h3>
-//                 </div>
-//               </motion.div>
+//                 </motion.div>
+//               </Link>
 //             ))}
 //           </motion.div>
 //         )}
 //       </section>
 
-//       {/* ---- FOOTER ---- */}
 //       <Footer />
 //     </main>
 //   );
@@ -164,14 +158,14 @@ import Footer from "../components/Footer";
 import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
-const ORIGINAL_FILTROS = ["Todos", "Empresarial", "Residencial", "Casas"];
+const ORIGINAL_FILTROS = ["Todos"];
 const NAV_H = 96;
 
 export default function Construcoes() {
   const { empreendimentos, loading } = useEmpreendimentos();
   const [tab, setTab] = useState("Todos");
   const [translatedFiltros, setTranslatedFiltros] = useState(ORIGINAL_FILTROS);
-  const [translatedTitle, setTranslatedTitle] = useState("Construções");
+  const [translatedTitle, setTranslatedTitle] = useState("Construções para terceiros");
   const [translatedBreadcrumb, setTranslatedBreadcrumb] = useState("Construções");
   const [translatedEmpreendimentos, setTranslatedEmpreendimentos] = useState([]);
 
@@ -182,7 +176,6 @@ export default function Construcoes() {
     const traduzir = async () => {
       if (language === "port") {
         setTranslatedFiltros(ORIGINAL_FILTROS);
-        setTranslatedTitle("Construções");
         setTranslatedBreadcrumb("Construções");
         setTranslatedEmpreendimentos(empreendimentos);
         return;
@@ -190,7 +183,7 @@ export default function Construcoes() {
 
       try {
         const [tituloTrad, breadcrumbTrad, ...filtrosTraduzidos] = await translateBatch(
-          ["Construções", "Construções", ...ORIGINAL_FILTROS],
+          ["Construções para terceiros", "Construções", ...ORIGINAL_FILTROS],
           "en"
         );
 
