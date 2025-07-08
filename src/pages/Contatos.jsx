@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail } from "lucide-react";
@@ -7,6 +5,7 @@ import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 import Rodape from "../components/Footer";
 import local from "../assets/contato.png";
+import emailjs from "emailjs-com";
 
 const Contato = () => {
   const { language } = useLanguage();
@@ -28,6 +27,9 @@ const Contato = () => {
     assunto: "",
     mensagem: "",
   });
+
+  const [messageStatus, setMessageStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const traduzir = async () => {
@@ -80,11 +82,31 @@ const Contato = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const numero = "5571988970381"; // Número sem formatação
-    const texto = `Olá, meu nome é ${form.nome}.%0AAssunto: ${form.assunto}.%0A${form.mensagem}`;
+    const templateParams = {
+      from_name: form.nome,
+      subject: form.assunto,
+      message: form.mensagem,
+      from_email: "victormarback@objetivaconsteincorp.com.br",
+    };
 
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
-    window.open(url, "_blank");
+    setIsLoading(true);
+    setMessageStatus("");
+
+    emailjs
+      .send("service_ikcn22q", "template_6ezjvjl", templateParams, "ygKQoquvVk39ETaoI")
+      .then(
+        (response) => {
+          console.log("SUCCESS!", response.status, response.text);
+          setMessageStatus("Mensagem enviada com sucesso!");
+          setForm({ nome: "", assunto: "", mensagem: "" });
+          setIsLoading(false);
+        },
+        (error) => {
+          console.log("FAILED...", error);
+          setMessageStatus("Falha ao enviar a mensagem. Tente novamente.");
+          setIsLoading(false);
+        }
+      );
   };
 
   return (
@@ -123,7 +145,8 @@ const Contato = () => {
               </p>
               <p className="flex items-center gap-2 text-gray-700">
                 <Mail className="w-4 h-4" />
-                victormarback@objetivaconsteincorp.com.br              </p>
+                victormarback@objetivaconsteincorp.com.br
+              </p>
               <div className="flex gap-4 pt-2">
                 <a href="#" aria-label="Facebook" className="hover:text-orange-500">
                   <i className="fab fa-facebook-f"></i>
@@ -152,7 +175,8 @@ const Contato = () => {
                 value={form.nome}
                 onChange={handleChange}
                 placeholder={labels.name}
-  className="border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none"
+                disabled={isLoading}
+                className="border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none disabled:bg-gray-100"
                 required
               />
               <input
@@ -161,8 +185,8 @@ const Contato = () => {
                 value={form.assunto}
                 onChange={handleChange}
                 placeholder={labels.subject}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none resize-none"
-
+                disabled={isLoading}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none disabled:bg-gray-100"
                 required
               />
             </div>
@@ -173,16 +197,30 @@ const Contato = () => {
               onChange={handleChange}
               rows="5"
               placeholder={labels.message}
-  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+              disabled={isLoading}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-orange-500 outline-none resize-none disabled:bg-gray-100"
               required
             ></textarea>
 
             <button
               type="submit"
-              className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition font-medium"
+              className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition font-medium flex items-center justify-center disabled:opacity-70"
+              disabled={isLoading}
             >
-              {labels.send}
+             {isLoading ? (
+  <>
+    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
+    Enviando...
+  </>
+) : (
+  labels.send
+)}
+
             </button>
+
+            {messageStatus && (
+              <p className="text-green-600 text-sm mt-2">{messageStatus}</p>
+            )}
           </motion.form>
         </div>
       </section>
