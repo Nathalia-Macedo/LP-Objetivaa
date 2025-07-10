@@ -6,11 +6,19 @@ import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
 const ORIGINAL_CATS = ["Todos"];
 
+const ORIGINAL_PARAGRAFOS = [
+  "Incorporação Imobiliária",
+  "Estudo Vocacional do Terreno",
+  "Viabilidade de Empreendimento",
+];
+
 const Empreendimentos = () => {
   const [active, setActive] = useState("Todos");
   const [translatedCats, setTranslatedCats] = useState(ORIGINAL_CATS);
   const [translatedTitle, setTranslatedTitle] = useState("Empreendimentos");
   const [translatedBreadcrumb, setTranslatedBreadcrumb] = useState("Empreendimentos");
+  const [translatedParagrafos, setTranslatedParagrafos] = useState(ORIGINAL_PARAGRAFOS);
+
 
   const { language } = useLanguage();
   const { translateBatch } = useDynamicTranslation();
@@ -21,6 +29,8 @@ const Empreendimentos = () => {
         setTranslatedCats(ORIGINAL_CATS);
         setTranslatedTitle("Empreendimentos");
         setTranslatedBreadcrumb("Empreendimentos");
+        setTranslatedParagrafos(ORIGINAL_PARAGRAFOS);
+
         return;
       }
 
@@ -40,6 +50,17 @@ const Empreendimentos = () => {
 
       try {
         const traducaoFinal = await translateWithRetry(textsToTranslate);
+        const paragrafosTraduzidos = await translateBatch(ORIGINAL_PARAGRAFOS, "en");
+
+      const corrigirErros = (lista) =>
+        lista.map((t) => {
+          let texto = t;
+          texto = texto.replace("|", "");
+          return texto;
+        });
+
+        setTranslatedParagrafos(corrigirErros(paragrafosTraduzidos));
+
         console.log("Traduções recebidas:", traducaoFinal);
 
         setTranslatedTitle(traducaoFinal[0]);
@@ -57,32 +78,44 @@ const Empreendimentos = () => {
     <div className="bg-white pt-28 md:pt-32">
       {/* ---------- breadcrumb + título + filtros ---------- */}
       <header className="max-w-7xl mx-auto px-4 mb-10">
-        <nav className="text-xs text-gray-500 uppercase mb-3">
-          <a href="/" className="hover:underline cursor-pointer">Home</a> / <span>{translatedBreadcrumb}</span>
-        </nav>
+  {/* breadcrumb */}
+  <nav className="text-xs text-gray-500 uppercase mb-3">
+    <a href="/" className="hover:underline cursor-pointer">Home</a> / <span>{translatedBreadcrumb}</span>
+  </nav>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
-            {translatedTitle}
-          </h1>
+  {/* título + parágrafos + filtros */}
+  <div className="flex flex-col gap-4">
+    {/* título */}
+    <h1 className="text-2xl md:text-4xl font-extrabold text-neutral-900">
+      {translatedTitle}
+    </h1>
 
-          <ul className="flex gap-6 text-sm font-medium">
-            {translatedCats.map((c, i) => (
-              <li
-                key={c}
-                className={`cursor-pointer ${
-                  active === ORIGINAL_CATS[i]
-                    ? "text-black"
-                    : "text-gray-400 hover:text-black"
-                }`}
-                onClick={() => setActive(ORIGINAL_CATS[i])} // ainda usamos o valor original como chave
-              >
-                {c}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </header>
+    {/* parágrafos abaixo do título */}
+    <ul className="list-disc pl-6 space-y-1 text-gray-700 text-base md:text-lg">
+      {translatedParagrafos.map((texto, i) => (
+        <li key={i}>{texto}</li>
+      ))}
+    </ul>
+
+    {/* filtros */}
+    <ul className="flex gap-6 text-sm font-medium">
+      {translatedCats.map((c, i) => (
+        <li
+          key={c}
+          className={`cursor-pointer ${
+            active === ORIGINAL_CATS[i]
+              ? "text-black"
+              : "text-gray-400 hover:text-black"
+          }`}
+          onClick={() => setActive(ORIGINAL_CATS[i])}
+        >
+          {c}
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
 
       {/* ---------- grade ---------- */}
       <section className="max-w-7xl mx-auto px-4 pb-16">
