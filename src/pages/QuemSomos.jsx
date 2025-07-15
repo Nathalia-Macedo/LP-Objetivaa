@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import mockup from "../assets/Mockup.png";
 import ClientesSatisfeitos from "../components/ClientesSatisfeitos";
@@ -8,12 +8,11 @@ import icone2 from '../assets/icone2.png';
 import icone1 from '../assets/icone1.png';
 import icone3 from '../assets/icone3.png';
 
-
 const QuemSomos = () => {
   const { language } = useLanguage();
   const { translateBatch } = useDynamicTranslation();
 
-  const textosOriginais = [
+  const textosOriginais = useMemo(() => [
     "Conheça a trajetória da Objetiva:",
     "Excelência em construção civil, inovação, qualidade técnica e compromisso com o cliente.",
     "A Objetiva Incorporações e Construções atua há mais de 25 anos no mercado da construção civil. Iniciamos nossa trajetória como uma empresa de assessoria técnica e, com visão estratégica e inovação, evoluímos para nos tornar uma incorporadora e construtora completa.",
@@ -30,7 +29,8 @@ const QuemSomos = () => {
     "Ética e transparência",
     "Desenvolvimento sustentável",
     "Fale com a Objetiva!",
-  ];
+    "Os princípios que nos guiam:",  // <-- texto adicionado para tradução
+  ], []);
 
   const [traduzido, setTraduzido] = useState(textosOriginais);
 
@@ -56,7 +56,7 @@ const QuemSomos = () => {
     };
 
     traduzir();
-  }, [language, translateBatch]); // Adicione translateBatch como dependência
+  }, [language, translateBatch, textosOriginais]);
 
   return (
     <div className="bg-white text-neutral-800">
@@ -78,7 +78,7 @@ const QuemSomos = () => {
       <section className="bg-white py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-xl md:text-2xl font-semibold text-neutral-800 mb-12 text-left md:text-center">
-            Os princípios que nos guiam:
+            {traduzido[16]}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">

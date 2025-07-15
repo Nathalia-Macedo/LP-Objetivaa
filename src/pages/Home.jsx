@@ -14,32 +14,44 @@ import ClientesSatisfeitos from "../components/ClientesSatisfeitos";
 import { useLanguage } from "../context/LanguageContext";
 import useDynamicTranslation from "../hooks/useDynamicTranslaction";
 
+const TEXTS = {
+  indicador: "",
+  heroLine1: "",
+  heroLine2: "",
+  lancamento: "",
+  titulo: "MAIS DE 25 ANOS CONSTRUINDO COM EXCELÊNCIA E CONFIANÇA",
+  paragrafo1:
+    "Com experiência, inovação e foco no cliente, entregamos soluções completas em incorporação, edificações e reformas.",
+  paragrafo2:
+    "Nosso compromisso é transformar projetos em realidade com inteligência técnica, cumprimento de prazos e foco total na satisfação do cliente.",
+  lista: [
+    "Incorporação Imobiliária",
+    "Construção de casas, prédios e empreendimentos corporativos",
+    "Reformas em geral",
+    "Reservatórios e rede de distribuição de água",
+    "Gerenciamento e fiscalização de obras",
+  ],
+  cta: "",
+  icone1: {
+    titulo: "INCORPORAÇÃO",
+    texto:
+      "Desenvolvimento de empreendimentos imobiliários com excelência e qualidade superior",
+  },
+  icone2: {
+    titulo: "CONSTRUÇÃO",
+    texto:
+      "Obras residenciais, comerciais e corporativas com tecnologia e inovação",
+  },
+  icone3: {
+    titulo: "REFORMAS",
+    texto:
+      "Reformas e modernizações com planejamento e execução de alta qualidade",
+  },
+};
+
 const Home = () => {
   const { language } = useLanguage();
-  const { translateText } = useDynamicTranslation();
-
-  const TEXTS = {
-    indicador: "",
-    heroLine1: "",
-    heroLine2: "",
-    lancamento: "",
-    titulo: "MAIS DE 25 ANOS CONSTRUINDO COM EXCELÊNCIA E CONFIANÇA",
-    paragrafo1:
-      "Com experiência, inovação e foco no cliente, entregamos soluções completas em incorporação, edificações e reformas.",
-    paragrafo2:
-      "Nosso compromisso é transformar projetos em realidade com inteligência técnica, cumprimento de prazos e foco total na satisfação do cliente.",
-    lista: [
-      "Incorporação Imobiliária",
-      "Construção de casas, prédios e empreendimentos corporativos",
-      "Reformas em geral",
-      "Reservatórios e rede de distribuição de água",
-      "Gerenciamento e fiscalização de obras",
-    ],
-    cta: "",
-    icone1: { titulo: "INCORPORAÇÃO", texto: "Desenvolvimento de empreendimentos imobiliários com excelência e qualidade superior" },
-    icone2: { titulo: "CONSTRUÇÃO", texto: "Obras residenciais, comerciais e corporativas com tecnologia e inovação" },
-    icone3: { titulo: "REFORMAS", texto: "Reformas e modernizações com planejamento e execução de alta qualidade" },
-  };
+  const { translateText, translateBatch } = useDynamicTranslation();
 
   const [TR, setTR] = useState(TEXTS);
 
@@ -53,7 +65,7 @@ const Home = () => {
           if (typeof value === "string") {
             translated[key] = await translateText(value, "en");
           } else if (Array.isArray(value)) {
-            translated[key] = await Promise.all(value.map((v) => translateText(v, "en")));
+            translated[key] = await translateBatch(value, "en");
           } else if (typeof value === "object") {
             const objEntries = Object.entries(value);
             const inner = {};
@@ -63,6 +75,7 @@ const Home = () => {
             translated[key] = inner;
           }
         }
+
         setTR(translated);
       } else {
         setTR(TEXTS);
@@ -70,7 +83,7 @@ const Home = () => {
     };
 
     translateAll();
-  }, [language]);
+  }, [language, translateBatch, translateText]);
 
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -98,62 +111,63 @@ const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-     {/* Hero Section - VERSÃO CORRIGIDA */}
-<section id="home" className="relative w-full aspect-video min-h-[70vh] overflow-hidden bg-black">
-  <div className="absolute inset-0 w-full h-full">
-    <video
-      ref={videoRef}
-      autoPlay
-      loop
-      playsInline
-      muted={isMuted}
-      poster={heroBackground}
-      preload="auto"
-      className="w-full h-full object-cover object-center"
-      style={{
-        minHeight: '100%',
-        minWidth: '100%'
-      }}
-    >
-      <source src={heroVideo} type="video/mp4" />
-      Seu navegador não suporta vídeos em HTML5.
-    </video>
-  </div>
+      <section
+        id="home"
+        className="relative w-full aspect-video min-h-[70vh] overflow-hidden bg-black"
+      >
+        <div className="absolute inset-0 w-full h-full">
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            playsInline
+            muted={isMuted}
+            poster={heroBackground}
+            preload="auto"
+            className="w-full h-full object-cover object-center"
+            style={{
+              minHeight: "100%",
+              minWidth: "100%",
+            }}
+          >
+            <source src={heroVideo} type="video/mp4" />
+            Seu navegador não suporta vídeos em HTML5.
+          </video>
+        </div>
 
-  {/* Botões de controle */}
-  <div className="absolute top-[5rem] right-4 flex flex-col gap-3 z-10">
-    <button
-      onClick={togglePlay}
-      className="bg-white/70 backdrop-blur p-2 rounded-full text-black hover:bg-white transition"
-      aria-label="Play/Pause"
-    >
-      {isPlaying ? "❚❚" : "▶"}
-    </button>
-    <button
-      onClick={toggleMute}
-      className="bg-white/70 backdrop-blur p-2 rounded-full text-black hover:bg-white transition"
-      aria-label="Mute/Unmute"
-    >
-      {isMuted ? "🔇" : "🔊"}
-    </button>
-  </div>
+        {/* Botões de controle */}
+        <div className="absolute top-[5rem] right-4 flex flex-col gap-3 z-10">
+          <button
+            onClick={togglePlay}
+            className="bg-white/70 backdrop-blur p-2 rounded-full text-black hover:bg-white transition"
+            aria-label="Play/Pause"
+          >
+            {isPlaying ? "❚❚" : "▶"}
+          </button>
+          <button
+            onClick={toggleMute}
+            className="bg-white/70 backdrop-blur p-2 rounded-full text-black hover:bg-white transition"
+            aria-label="Mute/Unmute"
+          >
+            {isMuted ? "🔇" : "🔊"}
+          </button>
+        </div>
 
-  {/* Headline */}
-  <div className="absolute bottom-8 left-4 md:left-8 z-10 max-w-[90%]">
-    <motion.h1
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.4 }}
-      className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight uppercase drop-shadow-xl"
-      style={{ fontFamily: "Arial, sans-serif", fontWeight: 900, letterSpacing: "0.02em" }}
-    >
-      {TR.heroLine1}
-      <br />
-      {TR.heroLine2}
-    </motion.h1>
-  </div>
-</section>
-
+        {/* Headline */}
+        <div className="absolute bottom-8 left-4 md:left-8 z-10 max-w-[90%]">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight uppercase drop-shadow-xl"
+            style={{ fontFamily: "Arial, sans-serif", fontWeight: 900, letterSpacing: "0.02em" }}
+          >
+            {TR.heroLine1}
+            <br />
+            {TR.heroLine2}
+          </motion.h1>
+        </div>
+      </section>
 
       {/* Conteúdo - SEÇÃO MODIFICADA PARA RESPONSIVIDADE */}
       <section className="py-12 md:py-20 bg-white">
@@ -191,12 +205,8 @@ const Home = () => {
               </h2>
 
               <div className="space-y-4">
-                <p className="text-base text-gray-700 leading-relaxed">
-                  {TR.paragrafo1}
-                </p>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
-                  {TR.paragrafo2}
-                </p>
+                <p className="text-base text-gray-700 leading-relaxed">{TR.paragrafo1}</p>
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">{TR.paragrafo2}</p>
               </div>
 
               <div className="space-y-3 text-gray-700 text-sm md:text-base">
@@ -235,9 +245,7 @@ const Home = () => {
                 <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4 uppercase">
                   {icn.titulo}
                 </h3>
-                <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                  {icn.texto}
-                </p>
+                <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{icn.texto}</p>
               </div>
             ))}
           </motion.div>

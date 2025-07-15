@@ -13,29 +13,31 @@ const google = async (text, to = "en") => {
 };
 
 /* ---------- Funções puras ---------- */
-export const translateBatch = async (arr, to = "en") => {
-  const joined = arr.join("|||");
-  const key = `${to}:${joined}`;
-
+export const translateText = async (str, to = "en") => {
+  const key = `${to}:${str}`;
   const cached = sessionStorage.getItem(key);
-  if (cached) return JSON.parse(cached);
+  if (cached) return cached;
 
-  const translatedJoined = await google(joined, to);
-  const out = translatedJoined.split("|||");
+  const translated = await google(str, to);
+  const cleaned = translated.replace(/\|+/g, " ").trim();
 
-  sessionStorage.setItem(key, JSON.stringify(out));
-  return out;
+  sessionStorage.setItem(key, cleaned);
+  return cleaned;
 };
 
-export const translateText = async (str, to = "en") => {
-  const [t] = await translateBatch([str], to);
-  return t;
+export const translateBatch = async (arr, to = "en") => {
+  const results = [];
+  for (const str of arr) {
+    const t = await translateText(str, to);
+    results.push(t);
+  }
+  return results;
 };
 
 /* ---------- Hook opcional ---------- */
 const useDynamicTranslation = () => {
   const translateBatchCb = useCallback(translateBatch, []);
-  const translateTextCb  = useCallback(translateText,  []);
+  const translateTextCb = useCallback(translateText, []);
 
   return { translateBatch: translateBatchCb, translateText: translateTextCb };
 };
