@@ -9,7 +9,17 @@ const google = async (text, to = "en") => {
 
   const res = await fetch(url);
   const data = await res.json();
-  return data[0]?.map((seg) => seg[0]).join("") || text;
+
+  if (Array.isArray(data)) {
+    if (Array.isArray(data[0])) {
+      return data[0].map((seg) => (Array.isArray(seg) ? seg[0] : "")).join("") || text;
+    }
+    if (typeof data[0] === "string") {
+      return data[0];
+    }
+  }
+
+  return text;
 };
 
 /* ---------- Funções puras ---------- */
