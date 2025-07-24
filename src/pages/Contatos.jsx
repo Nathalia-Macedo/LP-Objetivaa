@@ -145,7 +145,7 @@ const Contato = () => {
               </p>
               <p className="flex items-center gap-2 text-gray-700">
                 <Mail className="w-4 h-4" />
-                victormarback@objetivaconsteincorp.com.br
+                victormarback@objetivaincorpeconst.com.br
               </p>
               <div className="flex gap-4 pt-2">
                 <a href="#" aria-label="Facebook" className="hover:text-orange-500">
