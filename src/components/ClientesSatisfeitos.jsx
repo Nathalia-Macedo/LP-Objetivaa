@@ -26,7 +26,7 @@ const testimonialsPT = [
   },
 ];
 
-const headingPT = "Mais de 50 mil m² construídos";
+const headingPT = "";
 
 /* Hook utilitário para detectar mobile */
 const useIsMobile = () => {

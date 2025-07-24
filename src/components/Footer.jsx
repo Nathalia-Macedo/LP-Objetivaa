@@ -55,7 +55,7 @@ const Rodape = () => {
         {/* Contato */}
         <div className="text-sm">
           <h3 className="font-semibold uppercase mb-2">{labels.contact}</h3>
-          <p>victormarback@objetivaconsteincorp.com.br</p>
+          <p>victormarback@objetivaincorpeconst.com.br</p>
           <p>(71) 98897-0381</p>
         </div>
       </div>
